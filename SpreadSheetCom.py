@@ -1,8 +1,6 @@
 from __future__ import print_function
 
 import os.path
-import keyring
-
 
 import smtplib
 import ssl
@@ -24,6 +22,7 @@ SAMPLE_RANGE_NAME = 'Assignments!B3:G16'
 
 TEST_EMAIL = "giandevmail@gmail.com"
 TEST_PASSWORD = 'edaayvzexfwintzr'
+
 
 def main():
     """Shows basic usage of the Sheets API.
