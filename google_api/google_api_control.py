@@ -50,5 +50,5 @@ class GoogleApiControl:
     def check_assignments(self):
         pass
 
-    def notify_user(self):
+    def _notify_user(self):
         self.gmail_ctr.send_email("HELLO")

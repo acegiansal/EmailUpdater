@@ -16,8 +16,8 @@ if __name__ == "__main__":
         - Google sheet link
     2. Get google credentials
     ----------
-    3. Create ScheduledTasks object
-    4. Start Scheduled Tasks object
+    3. Schedule assignment
+    4. Await scheduled tasks
     """
     config_file_name = "userconfig.json"
     config_dict = UserConfig.parse_config(config_file_name)
@@ -27,8 +27,10 @@ if __name__ == "__main__":
         api_control = GoogleApiControl(user)
 
         # schedule.every().day.at(user.get_notify_time()).do(api_control.check_assignments)
-        schedule.every().tuesday.at("22:44").do(api_control.notify_user)
+        # schedule.every().tuesday.at("22:44").do(api_control.notify_user)
 
     while True:
+        print("Checking for scheduled run")
         schedule.run_pending()
-        time.sleep(1)
+        # Wait every 5 minutes before checking
+        time.sleep(300)

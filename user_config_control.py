@@ -11,6 +11,8 @@ class UserConfig:
         self.sender = user_config['sender']
         self.service_id = service_id
         self.credentials_file = user_config['credentials_file_name']
+        self.google_sheet_link = user_config['google_sheet_link']
+        self.sheet_range = user_config['sheet_range']
         self.notify_time = self._parse_time(user_config['notify_time'])
 
         # set password
@@ -37,6 +39,12 @@ class UserConfig:
 
     def get_credentials_file(self):
         return self.credentials_file
+
+    def get_google_sheet_link(self):
+        return self.google_sheet_link
+
+    def get_sheet_range(self):
+        return self.sheet_range
 
     @staticmethod
     def parse_config(config_file_name) -> dict:

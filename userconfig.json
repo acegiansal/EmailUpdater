@@ -6,6 +6,7 @@
         "receiver": "acegiansal@gmail.com",
         "notify_time": "12:00",
         "google_sheet_link": "1_gwrr3jNRTdwfkp1i2O-AIvkxAhaERtXycZufN25Wso",
+        "sheet_range": "Assignments!B3:G16",
         "credentials_file_name": "credentials.json"
       }
     ]
