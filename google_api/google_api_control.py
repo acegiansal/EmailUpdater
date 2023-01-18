@@ -7,8 +7,10 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 
 from user_config_control import UserConfig
-from google_sheets_control import GoogleSheetsControl
-from gmail_control import GmailControl
+from google_api.google_sheets_control import GoogleSheetsControl
+from google_api.gmail_control import GmailControl
+
+from email.mime.text import MIMEText
 
 
 class GoogleApiControl:
@@ -17,7 +19,7 @@ class GoogleApiControl:
 
     def __init__(self, user: UserConfig):
         self.creds = self.create_creds(user.get_credentials_file())
-        self.gmail_ctr = GmailControl()
+        self.gmail_ctr = GmailControl(user)
         self.sheets_ctr = GoogleSheetsControl(self.creds)
 
     def create_creds(self, credentials_file):
@@ -49,4 +51,4 @@ class GoogleApiControl:
         pass
 
     def notify_user(self):
-        pass
+        self.gmail_ctr.send_email("HELLO")

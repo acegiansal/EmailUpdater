@@ -26,8 +26,9 @@ if __name__ == "__main__":
         user = UserConfig(user_config, config_dict['service_id'])
         api_control = GoogleApiControl(user)
 
-        # schedule.every().day.at(user.get_notify_time()).do(api_control.check_assignments())
+        # schedule.every().day.at(user.get_notify_time()).do(api_control.check_assignments)
+        schedule.every().tuesday.at("22:44").do(api_control.notify_user)
 
     while True:
         schedule.run_pending()
-        time.sleep(5)
+        time.sleep(1)

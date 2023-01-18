@@ -22,16 +22,18 @@ class UserConfig:
         keyring.set_password(self.service_id, username=self.sender, password=app_password)
 
     def get_password(self):
-        return keyring.get_password(self.service_id, self.sender)
+        password = keyring.get_password(self.service_id, self.sender)
+        print(f"The passowrd received is: {password}")
+        return password
 
     def get_receiver(self):
         return self.receiver
 
     def get_sender(self):
-        return self.receiver
+        return self.sender
 
     def get_notify_time(self):
-        return self.receiver
+        return self.notify_time
 
     def get_credentials_file(self):
         return self.credentials_file

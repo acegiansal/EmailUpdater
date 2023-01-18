@@ -21,7 +21,7 @@ SAMPLE_SPREADSHEET_ID = '1_gwrr3jNRTdwfkp1i2O-AIvkxAhaERtXycZufN25Wso'
 SAMPLE_RANGE_NAME = 'Assignments!B3:G16'
 
 TEST_EMAIL = "giandevmail@gmail.com"
-TEST_PASSWORD = 'edaayvzexfwintzr'
+TEST_PASSWORD = '<APP PASSWORD>'
 
 
 def main():
