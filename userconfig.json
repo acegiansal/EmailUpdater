@@ -1,0 +1,12 @@
+{
+  "service_id": "EmailUpdater",
+  "users": [
+      {
+        "sender": "giandevmail@gmail.com",
+        "receiver": "acegiansal@gmail.com",
+        "notify_time": "12:00",
+        "google_sheet_link": "1_gwrr3jNRTdwfkp1i2O-AIvkxAhaERtXycZufN25Wso",
+        "credentials_file_name": "credentials.json"
+      }
+    ]
+}
