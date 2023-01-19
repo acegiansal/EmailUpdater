@@ -9,6 +9,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from user_config_control import UserConfig
 from google_api.google_sheets_control import GoogleSheetsControl
 from google_api.gmail_control import GmailControl
+from google_api.sheet_readers.sheet_reader_control import SheetReaderBase, SheetReaderContext
 
 from email.mime.text import MIMEText
 
@@ -21,6 +22,7 @@ class GoogleApiControl:
         self.creds = self.create_creds(user.get_credentials_file())
         self.gmail_ctr = GmailControl(user)
         self.sheets_ctr = GoogleSheetsControl(self.creds)
+        self.sheet_reader = SheetReaderContext.determine_reader(user.get_sheet_type())
 
     def create_creds(self, credentials_file):
         creds = None
@@ -47,8 +49,19 @@ class GoogleApiControl:
                 token.write(creds.to_json())
         return creds
 
-    def check_assignments(self):
-        pass
+    def check_sheet(self):
+        sheet_info = self.sheets_ctr.get_sheet()
+        message = {"lines": []}
+        for row in sheet_info:
+            if self.sheet_reader.should_notify_user(row):
+                if message.get('Subject') is None:
+                    message['Subject'] = self.sheet_reader.get_subject()
+                if message.get('links') is None:
+                    message['links'] = self.sheet_reader.get_links()
+                message["lines"].append(self.sheet_reader.create_message(row))
 
-    def _notify_user(self):
-        self.gmail_ctr.send_email("HELLO")
+        # If a subject was created, the user should be notified
+        self._notify_user(message)
+
+    def _notify_user(self, message):
+        self.gmail_ctr.send_email(message)

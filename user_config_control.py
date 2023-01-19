@@ -14,6 +14,7 @@ class UserConfig:
         self.google_sheet_link = user_config['google_sheet_link']
         self.sheet_range = user_config['sheet_range']
         self.notify_time = self._parse_time(user_config['notify_time'])
+        self.sheet_type = user_config['sheet_type']
 
         # set password
         self._set_password()
@@ -45,6 +46,9 @@ class UserConfig:
 
     def get_sheet_range(self):
         return self.sheet_range
+
+    def get_sheet_type(self):
+        return self.sheet_type
 
     @staticmethod
     def parse_config(config_file_name) -> dict:

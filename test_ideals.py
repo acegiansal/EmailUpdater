@@ -2,27 +2,32 @@ import keyring
 from quickstart import testKey
 import schedule
 import time
+from abc import ABC, abstractmethod
 
 
-class Test:
-    def __init__(self, name):
-        self.name = name
+class Test(ABC):
+    @abstractmethod
+    def test(self):
+        pass
 
-    def get_name(self):
-        return self.name
+    def real(self, ls):
+        print("Zub")
+        print(ls)
 
-    def scheduled_print(self):
-        print(f"HELLO, THIS IS TEST: {self.name}")
+class testChild(Test):
+
+    TEST_LIST = [1,2,3]
+
+    def test(self):
+        return "hello"
+
+    def another(self):
+        self.real(self.TEST_LIST)
+
+
 
 
 if __name__ == '__main__':
+    t = testChild()
 
-    testList = [1,2,3]
-
-    for item in testList:
-        testItem = Test(item)
-        schedule.every(1).minutes.do(testItem.scheduled_print)
-
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+    t.another()

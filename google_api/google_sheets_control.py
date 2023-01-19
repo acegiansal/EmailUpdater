@@ -8,16 +8,14 @@ class GoogleSheetsControl:
         self.creds = creds
         service = build('sheets', 'v4', credentials=creds)
 
+        self.user = user
         # Call the Sheets API
-        sheet = service.spreadsheets()
-        result = sheet.values().get(spreadsheetId=user.get_google_sheet_link(),
-                                    range=user.get_sheet_range()).execute()
+        self.sheet = service.spreadsheets()
+
+    def get_sheet(self) -> list:
+        # Gets values of spreadsheet
+        result = self.sheet.values().get(spreadsheetId=self.user.get_google_sheet_link(),
+                                         range=self.user.get_sheet_range()).execute()
         values = result.get('values', [])
 
-        if not values:
-            print('No data found.')
-            return
-
-        for row in values:
-            # Print columns A and E, which correspond to indices 0 and 4.
-            print('%s, %s' % (row[0], row[5]))
+        return values
