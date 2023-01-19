@@ -31,10 +31,10 @@ class testChild(Test):
 
 
 if __name__ == '__main__':
-    test = []
-    testStr = "Hi"
-    test.append(testStr)
-    test2 = [1,2,3]
-    test2 += test
-    print(test)
+    today = date.today()
+    testDate = datetime.strptime('Wed, Jan 25, 2023', '%a, %b %d, %Y').date()
+
+    timeDelta = today - testDate
+
+    print(f"Days: {timeDelta.days} and type: {type(timeDelta)}")
 

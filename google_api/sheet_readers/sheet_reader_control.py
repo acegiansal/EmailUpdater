@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 
 class SheetReaderContext:
 
     @staticmethod
     def determine_reader(sheet_type):
-        if sheet_type == "assigment":
+        if sheet_type == "assignment":
             return AssignmentSheetReader()
 
 
@@ -22,11 +22,16 @@ class SheetReaderBase(ABC):
     def _read_row_information(self, row, ATTRIBUTES):
 
         self.row_info = {}
-
-        column = 0
-        for category in ATTRIBUTES:
-            self.row_info[category] = row[column]
-            column += 1
+        print(f"DEBUG -- Row -- {row}")
+        if row:
+            print(f"Attributes: {len(ATTRIBUTES)}")
+            column = 0
+            for category in ATTRIBUTES:
+                print(f"Column: {column}")
+                self.row_info[category] = row[column]
+                column += 1
+        else:
+            print("Row empty!")
 
     @abstractmethod
     def create_message(self, row) -> dict:
@@ -34,6 +39,10 @@ class SheetReaderBase(ABC):
 
     @abstractmethod
     def get_subject(self):
+        pass
+
+    @abstractmethod
+    def get_title(self, notify_counter):
         pass
 
     @abstractmethod
@@ -61,17 +70,21 @@ class AssignmentSheetReader(SheetReaderBase):
             return False
 
     def _calculate_date_diff(self) -> (bool, int):
+        # If the due date does not exist
+        if self.row_info.get('due_date', None) is None:
+            print(f"DATE NOT VALID! Got: {self.row_info.get('due_date', None)} Expected date like 'Wed, Jan 25, 2023'")
+            return False, -1
         try:
             today = date.today()
             due_date = datetime.strptime(self.row_info['due_date'], self.DATE_TEMPLATE).date()
-            return True, (due_date - today)
+            return True, (due_date - today).days
         except ValueError:
             print(f"DATE NOT VALID! Got: {self.row_info['due_date']} Expected date like 'Wed, Jan 25, 2023'")
             return False, -1
 
     def _due_date_close(self, date_diff) -> bool:
-        days_to_notify = [5,3,1]
-        return self.row_info['status'] != 'Done' and date_diff not in days_to_notify
+        days_to_notify = [5, 3, 1]
+        return self.row_info['status'] != 'Done' and date_diff in days_to_notify
 
     def create_message(self, row) -> list:
         message_info = []
@@ -85,6 +98,9 @@ class AssignmentSheetReader(SheetReaderBase):
 
     def get_subject(self):
         return "Assignment(s) due!"
+
+    def get_title(self, notify_counter):
+        return f"You have {notify_counter} assignments/midterms due soon!"
 
     def get_links(self) -> dict:
         return {"Brightspace": "https://brightspace.carleton.ca/d2l/home"}

@@ -16,35 +16,37 @@ class GmailControl:
         # Create a secure SSL context
         context = ssl.create_default_context()
 
-        with smtplib.SMTP_SSL("smtp.gmail.com", self.PORT, context=context) as server:
-            password = self.user.get_password()
-            sender = self.user.get_sender()
-            print(f"({sender}, {password})")
-            server.login(sender, password)
+        try:
+            with smtplib.SMTP_SSL("smtp.gmail.com", self.PORT, context=context) as server:
+                password = self.user.get_password()
+                sender = self.user.get_sender()
+                print(f"({sender}, {password})")
+                server.login(sender, password)
 
-            message = MIMEMultipart("alternative")
-            message['Subject'] = 'Structured Test'
-            message['From'] = self.user.get_sender()
-            message['To'] = self.user.get_receiver()
-            message.attach(self._formulate_email_body(message_info))
+                message = MIMEMultipart("alternative")
+                message['Subject'] = message_info['Subject']
+                message['From'] = self.user.get_sender()
+                message['To'] = self.user.get_receiver()
+                message.attach(self._formulate_email_body(message_info))
 
-            server.send_message(message)
+                server.send_message(message)
+        except AttributeError as e:
+            print(e)
 
     @staticmethod
     def _formulate_email_body(message_info: dict) -> MIMEText:
-        html_text = f"""\
-        <html>
-            <body>
-                <h2><b>{message_info['title']}</b></h2>
-                <hr>
-                <p>{message_info['line1']}</p>
-                <p>{message_info['line2']}</p>
-                <p>{message_info['line3']}</p>
-                <hr>
-                <a href='https://brightspace.carleton.ca/d2l/home'>Link to Brightspace<a>
-            </body>
-        </html
-        """
+        html_text = f"<html><body>"
+
+        html_text += f"<h2>{message_info['title']}</h2><hr>"
+
+        for line in message_info['lines']:
+            html_text += f"<p>{line}</p>"
+
+        for link_name in message_info['links']:
+            html_text += f"<a href='{message_info['links'][link_name]}'>{link_name}<a>"
+
+        html_text += "</body></html>"
+
         return MIMEText(html_text, "html")
 
 

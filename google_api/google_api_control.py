@@ -21,7 +21,7 @@ class GoogleApiControl:
     def __init__(self, user: UserConfig):
         self.creds = self.create_creds(user.get_credentials_file())
         self.gmail_ctr = GmailControl(user)
-        self.sheets_ctr = GoogleSheetsControl(self.creds)
+        self.sheets_ctr = GoogleSheetsControl(self.creds, user)
         self.sheet_reader = SheetReaderContext.determine_reader(user.get_sheet_type())
 
     def create_creds(self, credentials_file):
@@ -52,16 +52,23 @@ class GoogleApiControl:
     def check_sheet(self):
         sheet_info = self.sheets_ctr.get_sheet()
         message = {"lines": []}
+        notify_counter = 0
+        row_counter = 0
         for row in sheet_info:
+            print(f"\n------------------------- Row {row_counter} ----------------")
             if self.sheet_reader.should_notify_user(row):
+                notify_counter += 1
                 if message.get('Subject') is None:
                     message['Subject'] = self.sheet_reader.get_subject()
                 if message.get('links') is None:
                     message['links'] = self.sheet_reader.get_links()
                 message["lines"] += self.sheet_reader.create_message(row)
+            row_counter += 1
 
-        # If a subject was created, the user should be notified
-        self._notify_user(message)
+        if len(message['lines']) > 0:
+            message['title'] = self.sheet_reader.get_title(notify_counter)
+            # If a subject was created, the user should be notified
+            self._notify_user(message)
 
     def _notify_user(self, message):
         self.gmail_ctr.send_email(message)

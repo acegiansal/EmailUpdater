@@ -1,5 +1,6 @@
 google_api_python_client==2.73.0
 google_auth_oauthlib==0.8.0
 keyring==23.13.1
+pandas==1.5.3
 protobuf==4.21.12
 schedule==1.1.0

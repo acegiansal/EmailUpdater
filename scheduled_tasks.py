@@ -27,10 +27,13 @@ if __name__ == "__main__":
         api_control = GoogleApiControl(user)
 
         # schedule.every().day.at(user.get_notify_time()).do(api_control.check_assignments)
-        # schedule.every().tuesday.at("22:44").do(api_control.notify_user)
 
-    while True:
-        print("Checking for scheduled run")
-        schedule.run_pending()
-        # Wait every 5 minutes before checking
-        time.sleep(300)
+        api_control.check_sheet()
+
+    #     schedule.every().thursday.at("12:38").do(api_control.check_sheet)
+    #
+    # while True:
+    #     print("Checking for scheduled run")
+    #     schedule.run_pending()
+    #     # Wait every 5 minutes before checking
+    #     time.sleep(30)
