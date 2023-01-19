@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from datetime import date, datetime
 
 
 class SheetReaderContext:
@@ -11,20 +12,21 @@ class SheetReaderContext:
 
 class SheetReaderBase(ABC):
 
+    def __init__(self):
+        self.row_info = {}
+
     @abstractmethod
     def should_notify_user(self, row) -> bool:
         pass
 
-    def _read_row_information(self, row, ATTRIBUTES) -> dict:
+    def _read_row_information(self, row, ATTRIBUTES):
 
-        row_info = {}
+        self.row_info = {}
 
         column = 0
         for category in ATTRIBUTES:
-            row_info[category] = row[column]
+            self.row_info[category] = row[column]
             column += 1
-
-        return row_info
 
     @abstractmethod
     def create_message(self, row) -> dict:
@@ -43,16 +45,43 @@ class AssignmentSheetReader(SheetReaderBase):
 
     # Attributes need to be in order that they appear in the document
     ATTRIBUTES = ['class_code', 'assignment', 'status', 'weight', 'time', 'start_date', 'due_date']
+    DATE_TEMPLATE = '%a, %b %d, %Y'
 
     def should_notify_user(self, row) -> bool:
-        row_info = self._read_row_information(row, self.ATTRIBUTES)
+        self._read_row_information(row, self.ATTRIBUTES)
 
+        date_valid, date_diff = self._calculate_date_diff()
+        if date_valid:
+            # If the date has not already passed
+            if date_diff >= 0:
+                return self._due_date_close(date_diff)
+            else:
+                return False
+        else:
+            return False
 
+    def _calculate_date_diff(self) -> (bool, int):
+        try:
+            today = date.today()
+            due_date = datetime.strptime(self.row_info['due_date'], self.DATE_TEMPLATE).date()
+            return True, (due_date - today)
+        except ValueError:
+            print(f"DATE NOT VALID! Got: {self.row_info['due_date']} Expected date like 'Wed, Jan 25, 2023'")
+            return False, -1
 
-        return False
+    def _due_date_close(self, date_diff) -> bool:
+        days_to_notify = [5,3,1]
+        return self.row_info['status'] != 'Done' and date_diff not in days_to_notify
 
-    def create_message(self, row) -> dict:
-        pass
+    def create_message(self, row) -> list:
+        message_info = []
+        self._read_row_information(row, self.ATTRIBUTES)
+        date_valid, date_diff = self._calculate_date_diff()
+        if date_valid:
+            message_str = f"{self.row_info['class_code']} assignment --> {self.row_info['assignment']} " \
+                          f"is due in {date_diff} days! It is worth [{self.row_info['weight']}]"
+            message_info.append(message_str)
+        return message_info
 
     def get_subject(self):
         return "Assignment(s) due!"

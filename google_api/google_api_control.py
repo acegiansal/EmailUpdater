@@ -58,7 +58,7 @@ class GoogleApiControl:
                     message['Subject'] = self.sheet_reader.get_subject()
                 if message.get('links') is None:
                     message['links'] = self.sheet_reader.get_links()
-                message["lines"].append(self.sheet_reader.create_message(row))
+                message["lines"] += self.sheet_reader.create_message(row)
 
         # If a subject was created, the user should be notified
         self._notify_user(message)

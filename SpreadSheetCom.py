@@ -18,7 +18,7 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly', 'https://www.
 
 # The ID and range of a sample spreadsheet.
 SAMPLE_SPREADSHEET_ID = '1_gwrr3jNRTdwfkp1i2O-AIvkxAhaERtXycZufN25Wso'
-SAMPLE_RANGE_NAME = 'Assignments!B3:G16'
+SAMPLE_RANGE_NAME = 'Assignments!B3:H16'
 
 TEST_EMAIL = "giandevmail@gmail.com"
 TEST_PASSWORD = '<APP PASSWORD>'
@@ -61,25 +61,25 @@ def main():
 
         for row in values:
             # Print columns A and E, which correspond to indices 0 and 4.
-            print('%s, %s' % (row[0], row[5]))
+            print('%s, %s' % (row[0], row[6]))
 
-        # Send email
-        PORT = 465
-
-        # Create a secure SSL context
-        context = ssl.create_default_context()
-
-        with smtplib.SMTP_SSL("smtp.gmail.com", PORT, context=context) as server:
-            server.login(TEST_EMAIL, TEST_PASSWORD)
-
-            target_email = "acegiansal@gmail.com"
-            message = MIMEMultipart("alternative")
-            message['Subject'] = 'Test Email'
-            message['From'] = TEST_EMAIL
-            message['To'] = target_email
-            message.attach(MIMEText("THIS IS A TEST FROM PYTHON", "plain"))
-
-            server.send_message(message)
+        # # Send email
+        # PORT = 465
+        #
+        # # Create a secure SSL context
+        # context = ssl.create_default_context()
+        #
+        # with smtplib.SMTP_SSL("smtp.gmail.com", PORT, context=context) as server:
+        #     server.login(TEST_EMAIL, TEST_PASSWORD)
+        #
+        #     target_email = "acegiansal@gmail.com"
+        #     message = MIMEMultipart("alternative")
+        #     message['Subject'] = 'Test Email'
+        #     message['From'] = TEST_EMAIL
+        #     message['To'] = target_email
+        #     message.attach(MIMEText("THIS IS A TEST FROM PYTHON", "plain"))
+        #
+        #     server.send_message(message)
 
     except HttpError as err:
         print(err)
