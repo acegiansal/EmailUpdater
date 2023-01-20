@@ -92,7 +92,7 @@ class AssignmentSheetReader(SheetReaderBase):
         date_valid, date_diff = self._calculate_date_diff()
         if date_valid:
             message_str = f"{self.row_info['class_code']} assignment --> {self.row_info['assignment']} " \
-                          f"is due in {date_diff} days! It is worth [{self.row_info['weight']}]"
+                          f"is due in {date_diff} days ({self.row_info['due_date']})! It is worth <b>[{self.row_info['weight']}]</b>"
             message_info.append(message_str)
         return message_info
 

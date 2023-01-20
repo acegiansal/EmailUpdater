@@ -26,7 +26,7 @@ class UserConfig:
 
     def get_password(self):
         password = keyring.get_password(self.service_id, self.sender)
-        print(f"The passowrd received is: {password}")
+        print(f"The password received is: {password}")
         return password
 
     def get_receiver(self):

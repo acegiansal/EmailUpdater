@@ -9,9 +9,8 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from user_config_control import UserConfig
 from google_api.google_sheets_control import GoogleSheetsControl
 from google_api.gmail_control import GmailControl
-from google_api.sheet_readers.sheet_reader_control import SheetReaderBase, SheetReaderContext
+from google_api.sheet_readers.sheet_reader_control import SheetReaderContext
 
-from email.mime.text import MIMEText
 
 
 class GoogleApiControl:
@@ -27,7 +26,7 @@ class GoogleApiControl:
     def create_creds(self, credentials_file):
         creds = None
 
-        token_name = f"token.{credentials_file}.json"
+        token_name = f"token.{credentials_file}"
 
         ###### NOTE: Below code is taken from google quick start for google sheets API #####
 
