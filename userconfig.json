@@ -2,13 +2,13 @@
   "service_id": "EmailUpdater",
   "users": [
       {
-        "sender": "giandevmail@gmail.com",
-        "receiver": "acegiansal@gmail.com",
-        "notify_time": "12:00",
-        "google_sheet_link": "1_gwrr3jNRTdwfkp1i2O-AIvkxAhaERtXycZufN25Wso",
-        "sheet_range": "Assignments!B4:H20",
-        "sheet_type" : "assignment",
-        "credentials_file_name": "credentials.json"
+        "sender": "<sender email>",
+        "receiver": "<reciever email>",
+        "notify_time": "<Approximate time to be updated about the spreadsheet (NOT EXACT TIME)>",
+        "google_sheet_link": "<google sheet url>",
+        "sheet_range": "<range of data>",
+        "sheet_type" : "<type of sheet>",
+        "credentials_file_name": "<name of credentials file>"
       }
     ]
 }

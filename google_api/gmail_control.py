@@ -3,6 +3,21 @@ import smtplib
 import ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import logging
+
+m_logger = logging.getLogger(__name__)
+m_logger.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s:%(name)s:%(message)s')
+
+m_file_handler = logging.FileHandler('logs/google_api.log')
+m_file_handler.setFormatter(formatter)
+
+m_logger.addHandler(m_file_handler)
+
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+
+m_logger.addHandler(stream_handler)
 
 
 class GmailControl:
@@ -20,7 +35,7 @@ class GmailControl:
             with smtplib.SMTP_SSL("smtp.gmail.com", self.PORT, context=context) as server:
                 password = self.user.get_password()
                 sender = self.user.get_sender()
-                print(f"({sender}, {password})")
+                m_logger.info(f"Sending email to {sender}")
                 server.login(sender, password)
 
                 message = MIMEMultipart("alternative")
@@ -31,7 +46,7 @@ class GmailControl:
 
                 server.send_message(message)
         except AttributeError as e:
-            print(e)
+            m_logger.exception(e)
 
     @staticmethod
     def _formulate_email_body(message_info: dict) -> MIMEText:

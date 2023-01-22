@@ -1,6 +1,21 @@
 import keyring
 import re
 import json
+import logging
+
+u_logger = logging.getLogger(__name__)
+u_logger.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s:%(name)s:%(message)s')
+
+u_file_handler = logging.FileHandler('logs/email_updater.log')
+u_file_handler.setFormatter(formatter)
+
+u_logger.addHandler(u_file_handler)
+
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+
+u_logger.addHandler(stream_handler)
 
 
 class UserConfig:
@@ -26,7 +41,6 @@ class UserConfig:
 
     def get_password(self):
         password = keyring.get_password(self.service_id, self.sender)
-        print(f"The password received is: {password}")
         return password
 
     def get_receiver(self):
@@ -55,7 +69,7 @@ class UserConfig:
         try:
             file = open(config_file_name)
         except OSError:
-            print(OSError)
+            u_logger.exception(OSError)
 
         with file:
             file_info = json.load(file)
@@ -65,9 +79,9 @@ class UserConfig:
     @staticmethod
     def _parse_time(time):
         if re.match("^([01]?[0-9]|2[0-3]):[0-5][0-9]$", time):
-            print("In correct format")
-            # In proper time
+            u_logger.info(f"Time set to {time}")
             return time
         else:
+            u_logger.warning("Time not in valid format (expected [##:##]). Setting to midnight")
             # If not in proper time, will notify at 12AM (midnight)
             return "00:00"

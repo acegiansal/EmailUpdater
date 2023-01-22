@@ -1,5 +1,20 @@
 from abc import ABC, abstractmethod
 from datetime import date, datetime, timedelta
+import logging
+
+r_logger = logging.getLogger(__name__)
+r_logger.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s:%(name)s:%(message)s')
+
+r_file_handler = logging.FileHandler('logs/google_api.log')
+r_file_handler.setFormatter(formatter)
+
+r_logger.addHandler(r_file_handler)
+
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+
+r_logger.addHandler(stream_handler)
 
 
 class SheetReaderContext:
@@ -22,16 +37,16 @@ class SheetReaderBase(ABC):
     def _read_row_information(self, row, ATTRIBUTES):
 
         self.row_info = {}
-        print(f"DEBUG -- Row -- {row}")
+        r_logger.debug(f"DEBUG -- Row -- {row}")
         if row:
-            print(f"Attributes: {len(ATTRIBUTES)}")
+            r_logger.debug(f"Attributes: {len(ATTRIBUTES)}")
             column = 0
             for category in ATTRIBUTES:
-                print(f"Column: {column}")
+                r_logger.debug(f"Column: {column}")
                 self.row_info[category] = row[column]
                 column += 1
         else:
-            print("Row empty!")
+            r_logger.info("Row empty!")
 
     @abstractmethod
     def create_message(self, row) -> dict:
@@ -72,14 +87,14 @@ class AssignmentSheetReader(SheetReaderBase):
     def _calculate_date_diff(self) -> (bool, int):
         # If the due date does not exist
         if self.row_info.get('due_date', None) is None:
-            print(f"DATE NOT VALID! Got: {self.row_info.get('due_date', None)} Expected date like 'Wed, Jan 25, 2023'")
+            r_logger.error(f"DATE NOT VALID! Got: {self.row_info.get('due_date', None)} Expected date like 'Wed, Jan 25, 2023'")
             return False, -1
         try:
             today = date.today()
             due_date = datetime.strptime(self.row_info['due_date'], self.DATE_TEMPLATE).date()
             return True, (due_date - today).days
         except ValueError:
-            print(f"DATE NOT VALID! Got: {self.row_info['due_date']} Expected date like 'Wed, Jan 25, 2023'")
+            r_logger.info(f"DATE NOT VALID! Got: {self.row_info['due_date']} Expected date like 'Wed, Jan 25, 2023'")
             return False, -1
 
     def _due_date_close(self, date_diff) -> bool:

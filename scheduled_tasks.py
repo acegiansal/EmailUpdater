@@ -2,7 +2,21 @@ import schedule
 import time
 from user_config_control import UserConfig
 from google_api.google_api_control import GoogleApiControl
+import logging
 
+u_logger = logging.getLogger(__name__)
+u_logger.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s:%(name)s:%(message)s')
+
+u_file_handler = logging.FileHandler('logs/email_updater.log')
+u_file_handler.setFormatter(formatter)
+
+u_logger.addHandler(u_file_handler)
+
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+
+u_logger.addHandler(stream_handler)
 
 # MAIN CODE
 if __name__ == "__main__":
@@ -26,14 +40,12 @@ if __name__ == "__main__":
         user = UserConfig(user_config, config_dict['service_id'])
         api_control = GoogleApiControl(user)
 
-        # schedule.every().day.at(user.get_notify_time()).do(api_control.check_assignments)
+        u_logger.info(f"Scheduling check/notify for {user.get_notify_time()}")
 
-        api_control.check_sheet()
+        schedule.every().day.at(user.get_notify_time()).do(api_control.check_sheet)
 
-    #     schedule.every().thursday.at("12:38").do(api_control.check_sheet)
-    #
-    # while True:
-    #     print("Checking for scheduled run")
-    #     schedule.run_pending()
-    #     # Wait every 5 minutes before checking
-    #     time.sleep(30)
+    while True:
+        u_logger.info("Checking for scheduled run at time ")
+        schedule.run_pending()
+        # Wait every 30 minutes before checking
+        time.sleep(1800)
