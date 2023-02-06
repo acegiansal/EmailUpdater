@@ -27,16 +27,21 @@ stream_handler.setFormatter(formatter)
 
 g_logger.addHandler(stream_handler)
 
+
 class GoogleApiControl:
     # If modifying these scopes, delete the file token.json.
     SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly', 'https://www.googleapis.com/auth/gmail.readonly']
 
     def __init__(self, user: UserConfig):
-        self.creds = self.create_creds(user.get_credentials_file())
-        self.gmail_ctr = GmailControl(user)
-        self.sheets_ctr = GoogleSheetsControl(self.creds, user)
-        self.sheet_reader = SheetReaderContext.determine_reader(user.get_sheet_type())
+        self.user = user
+        self.creds = self.create_creds(self.user.get_credentials_file())
+        self.gmail_ctr = GmailControl(self.user)
+        self.sheets_ctr = GoogleSheetsControl(self.creds, self.user)
+        self.sheet_reader = SheetReaderContext.determine_reader(self.user.get_sheet_type())
         g_logger.info("Finished creating GoogleApiControl")
+
+    def reset_creds(self):
+        self.creds = self.create_creds(self.user.get_credentials_file())
 
     def create_creds(self, credentials_file):
         creds = None

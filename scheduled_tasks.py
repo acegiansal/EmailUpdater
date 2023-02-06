@@ -35,17 +35,25 @@ if __name__ == "__main__":
     """
     config_file_name = "userconfig.json"
     config_dict = UserConfig.parse_config(config_file_name)
+    api_controls = []
 
     for user_config in config_dict['users']:
         user = UserConfig(user_config, config_dict['service_id'])
         api_control = GoogleApiControl(user)
+        api_controls.append(api_control)
 
         u_logger.info(f"Scheduling check/notify for {user.get_notify_time()}")
 
+        schedule.every().sunday.at("22:00").do(api_control.reset_creds())
+
         schedule.every().day.at(user.get_notify_time()).do(api_control.check_sheet)
 
+
+    reset_counter = 0
     while True:
-        u_logger.info("Checking for scheduled run at time ")
+
+        u_logger.info("Checking for scheduled run")
         schedule.run_pending()
+        reset_counter += 1
         # Wait every 30 minutes before checking
         time.sleep(1800)
